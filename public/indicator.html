@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicators - Trading App</title>
+  <style>
+    /* Use dashboard.html styling with minor unique tweaks if needed */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+    .header { background: white; border-radius: 15px; padding: 25px 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    .header h1 { color: #333; font-size: 28px; font-weight: 700; }
+    .nav-buttons { display: flex; gap: 10px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: inline-block; }
+    .btn-secondary { background: #e0e0e0; color: #333; }
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    #logoutBtn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .content { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .content h2 { color: #333; font-size: 24px; margin-bottom: 20px; font-weight: 700; }
+    #indicatorTable { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+    th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 12px; text-align: left; font-weight: 600; position: sticky; top: 0; }
+    th:first-child { border-top-left-radius: 10px; }
+    th:last-child { border-top-right-radius: 10px; }
+    td { padding: 12px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    tr:hover { background: #f8f9ff; transition: background 0.2s; }
+    .loading { text-align: center; padding: 40px; color: #666; font-size: 16px; }
+    @media (max-width: 768px) { .header { flex-direction: column; align-items: flex-start; } table { font-size: 12px; } th, td { padding: 8px 6px; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div><h1>Indicators</h1></div>
+    <div class="nav-buttons">
+      <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      <a href="affirmations.html" class="btn btn-secondary">Success Affirmations</a>
+      <a href="affirmation-video.html" class="btn btn-secondary">Affirmation Video</a>
+      <a href="fno.html" class="btn btn-secondary">Futures & Options</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Nifty 50 - 200-Day Moving Averages</h2>
+    <div id="indicatorTable" class="loading">Loading indicators...</div>
+  </div>
+
+<script>
+async function loadUser() {
+  const res = await fetch("/api/me");
+  if (res.status === 401) { location.href = "index.html"; return; }
+}
+document.getElementById("logoutBtn").onclick = async () => { await fetch("/api/logout", { method: "POST" }); location.href = "index.html"; };
+loadUser();
+</script>
+
+<script>
+async function loadIndicators() {
+  const r = await fetch('/api/indicators?nifty50=1&nocache=1&t=' + Date.now());
+  const j = await r.json();
+  const data = j.data || [];
+  const container = document.getElementById('indicatorTable');
+
+  if (data.length === 0) {
+    container.innerHTML = '<div class="loading">No data available</div>';
+    return;
+  }
+
+  let html = '<table><tr><th>Symbol</th><th>Name</th><th>LTP</th><th>200-Day MA</th></tr>';
+  data.forEach(row => {
+    if (row.error) {
+      html += `<tr style="opacity:0.6;"><td><strong>${row.symbol}</strong></td><td colspan="3" style="color:#ef4444; font-style:italic;">Error: ${row.errorMsg || 'Failed to fetch'}</td></tr>`;
+    } else {
+      html += `<tr><td><strong>${row.symbol}</strong></td><td>${row.name||''}</td><td>₹${row.ltp!=null?Number(row.ltp).toFixed(2):'N/A'}</td><td>${row.ma200!=null?Number(row.ma200).toFixed(2):'N/A'}</td></tr>`;
+    }
+  });
+  html += '</table>';
+  container.innerHTML = html;
+}
+loadIndicators();
+</script>
+</body>
+</html>

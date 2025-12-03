@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading Success Affirmations - Trading App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .content h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .affirmations-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .affirmation-card {
+      background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #667eea;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .affirmation-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    }
+
+    .affirmation-number {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .affirmation-text {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    .quote-mark {
+      font-size: 40px;
+      color: #667eea;
+      opacity: 0.3;
+      margin-bottom: 10px;
+    }
+
+    .reading-tip {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 1px solid #f39c12;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .reading-tip h3 {
+      color: #e67e22;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .reading-tip p {
+      color: #8b4513;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .affirmations-container {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .nav-buttons {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Reading Success Affirmations</h1>
+    <div class="nav-buttons">
+      <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      <a href="indicator-view.html" class="btn btn-secondary">Indicators</a>
+      <a href="affirmation-video.html" class="btn btn-secondary">Affirmation Video</a>
+      <a href="fno.html" class="btn btn-secondary">Futures & Options</a>
+      <a href="api.html" class="btn btn-secondary">API</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>100 Trading Success Affirmations</h2>
+
+    <div class="reading-tip">
+      <h3>💡 Reading Tip</h3>
+      <p>Read these affirmations daily to cultivate a winning trading mindset. Say them aloud with conviction and believe in your ability to succeed in trading.</p>
+    </div>
+
+    <div class="affirmations-container">
+      <div class="affirmation-card">
+        <div class="affirmation-number">1</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am a disciplined and patient trader who follows my trading plan with unwavering commitment.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">2</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I embrace losses as valuable learning experiences that make me a better trader.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">3</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I trust my analysis and have the courage to enter trades when my setup is perfect.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">4</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain emotional control and never let fear or greed dictate my trading decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">5</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I focus on the process, not the outcome, knowing that consistent execution leads to success.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">6</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for every trading opportunity and approach each day with enthusiasm and optimism.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">7</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I respect the markets and understand that they are always right, even when they prove me wrong.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">8</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I continuously educate myself and stay updated with market developments and trading strategies.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">9</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice proper risk management and never risk more than I can afford to lose.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">10</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I accept that losses are part of trading and use them to improve my strategy and mindset.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">11</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I remain calm and composed during market volatility, knowing that panic leads to poor decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">12</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I celebrate small wins and learn from small losses, maintaining balance in my trading journey.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">13</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have unlimited potential as a trader and commit to lifelong learning and growth.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">14</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I trust my instincts while combining them with technical and fundamental analysis.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">15</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am patient enough to wait for high-probability setups rather than forcing trades.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">16</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain a positive mindset even after consecutive losses, knowing that success is inevitable.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">17</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I follow my trading rules religiously and never deviate from my proven strategy.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">18</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I view drawdowns as temporary setbacks that build my resilience and trading skills.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">19</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am committed to continuous improvement and regularly review my trades for lessons learned.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">20</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the mental strength to cut losses quickly and let profits run when appropriate.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">21</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I approach trading with humility, knowing that the markets can always surprise me.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">22</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for the abundance of opportunities that the financial markets provide.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">23</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain discipline in my daily routine, including proper sleep, exercise, and meditation.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">24</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I trust the process of compounding and understand that wealth is built gradually over time.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">25</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I focus on controlling what I can control: my entries, exits, and position sizing.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">26</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am becoming a master of my emotions and use them as signals rather than drivers of my decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">27</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I celebrate the journey of becoming a successful trader, not just the destination of profits.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">28</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have a growth mindset and view challenges as opportunities to become stronger.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">29</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice mindfulness and stay present in the moment during market hours.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">30</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am confident in my ability to adapt to changing market conditions and evolve my strategy.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">31</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain realistic expectations and understand that consistent small gains lead to wealth.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">32</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am free from the need for validation and trade based on my own analysis and conviction.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">33</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I respect the power of compounding and let my winners compound my account balance.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">34</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I approach each trading day with curiosity and a desire to learn something new.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">35</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the discipline to avoid revenge trading after a loss and wait for proper setups.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">36</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am building a legacy of consistent trading performance that will benefit future generations.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">37</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice gratitude for my trading education and the mentors who guide me.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">38</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain healthy boundaries and know when to step away from the markets for mental recharge.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">39</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am worthy of trading success and deserve the financial freedom it brings.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">40</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I embrace uncertainty as a natural part of trading and remain comfortable with it.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">41</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the courage to admit when I'm wrong and exit trades without hesitation.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">42</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I focus on the quality of my trades rather than the quantity of trades executed.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">43</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am becoming increasingly aware of my trading biases and work to eliminate them.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">44</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I treat trading as a business and approach it with the same professionalism as any enterprise.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">45</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for the technology that allows me to participate in global financial markets.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">46</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain objectivity and avoid letting personal opinions influence my trading decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">47</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the patience to wait for the perfect storm of conditions before entering a trade.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">48</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am committed to ethical trading practices and never manipulate markets or spread misinformation.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">49</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I view myself as a student of the markets and approach each day with humility and wonder.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">50</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the mental toughness to withstand temporary setbacks and continue moving forward.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">51</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice visualization and see myself achieving trading success in vivid detail.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">52</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am developing the intuition that comes from years of studying market patterns.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">53</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain a trading journal that documents my journey and helps me improve continuously.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">54</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am building wealth systematically through disciplined and calculated trading decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">55</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I respect the time it takes to become a consistently profitable trader and am patient with myself.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">56</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I avoid comparison with other traders and focus on my own progress and improvement.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">57</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the wisdom to know when to hold and when to fold in any trading situation.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">58</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am creating positive trading habits that will serve me for the rest of my career.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">59</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I approach trading with joy and enthusiasm rather than stress and anxiety.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">60</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am worthy of the success that comes from hard work, dedication, and continuous learning.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">61</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain a healthy work-life balance that supports my trading performance.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">62</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I trust in the power of compounding and understand that small, consistent gains create wealth.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">63</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am developing the resilience to bounce back stronger after every setback.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">64</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice self-compassion and understand that even successful traders have losing trades.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">65</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am building a trading system that works for me and my unique personality and strengths.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">66</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the courage to trade against the crowd when my analysis shows I'm right.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">67</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for the financial education that empowers me to create wealth through trading.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">68</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain a positive relationship with money and view it as a tool for freedom and opportunity.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">69</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am committed to mastering one trading strategy before moving on to another.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">70</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the mental clarity to recognize when market conditions change and adapt accordingly.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">71</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice deep breathing and meditation to maintain calm during volatile market periods.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">72</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am creating a legacy of financial independence that will benefit my family and community.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">73</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I focus on the present moment and don't worry about past losses or future uncertainties.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">74</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the discipline to follow my trading plan even when it's emotionally challenging.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">75</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am becoming the trader I need to be to achieve my financial goals and dreams.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">76</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice gratitude for both winning and losing trades, as they teach me valuable lessons.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">77</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain healthy skepticism and verify all information before making trading decisions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">78</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am developing the confidence that comes from thorough preparation and diligent study.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">79</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I treat every trade as an opportunity to practice my skills and improve my performance.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">80</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the wisdom to know that timing is everything in trading and patience is my ally.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">81</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am building emotional intelligence that allows me to trade with clarity and confidence.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">82</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I respect the markets' ability to be unpredictable and remain flexible in my approach.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">83</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am committed to lifelong learning and view every market experience as a teacher.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">84</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice positive self-talk and eliminate negative thoughts that hinder my trading success.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">85</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the mental fortitude to withstand periods of drawdown and continue trading effectively.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">86</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for the technology and tools that make sophisticated trading accessible to everyone.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">87</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain objectivity by keeping my ego in check and trading based on facts, not feelings.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">88</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am developing the intuition that guides me toward profitable trading opportunities.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">89</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice mindfulness and stay fully present during my trading sessions.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">90</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the courage to take calculated risks that align with my risk management plan.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">91</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am building a trading business that generates passive income and financial freedom.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">92</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I maintain a healthy relationship with uncertainty and view it as an opportunity, not a threat.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">93</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am worthy of the success that comes from years of dedication to mastering my craft.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">94</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I practice self-reflection daily to identify areas for improvement and celebrate my progress.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">95</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I have the mental strength to overcome any challenge that the markets present to me.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">96</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am grateful for the community of traders who share knowledge and support each other.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">97</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I approach trading with enthusiasm and view each day as a new opportunity to excel.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">98</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am becoming the master of my emotions and use them to enhance, not hinder, my trading.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">99</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I trust in my ability to create consistent, long-term success through disciplined trading.</div>
+      </div>
+
+      <div class="affirmation-card">
+        <div class="affirmation-number">100</div>
+        <div class="quote-mark">"</div>
+        <div class="affirmation-text">I am a successful trader who combines skill, discipline, and positive mindset to achieve financial freedom.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Logout functionality
+    document.getElementById('logoutBtn').onclick = async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Stories - Habits Service</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .dashboard-card {
+            @apply bg-white rounded-lg shadow-md p-6 mb-6;
+        }
+        .indicator {
+            @apply bg-blue-100 text-blue-800 text-sm font-semibold px-2.5 py-0.5 rounded-full;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Habits Service</h1>
+                <nav>
+                    <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2">Dashboard</a>
+                    <a href="/user-stories.html" class="bg-blue-100 text-blue-700 px-3 py-2 rounded-md">User Stories</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">User Stories</h2>
+                <p class="text-gray-600">Documentation of implemented features and user stories.</p>
+            </div>
+
+            <!-- Authentication Section -->
+            <div class="dashboard-card">
+                <div class="flex items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Authentication System</h3>
+                    <span class="indicator ml-2">Core</span>
+                </div>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-blue-500 pl-4 py-1">
+                        <h4 class="font-medium">User Registration</h4>
+                        <p class="text-sm text-gray-600">As a new user, I want to create an account with email and password.</p>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-4 py-1">
+                        <h4 class="font-medium">User Login/Logout</h4>
+                        <p class="text-sm text-gray-600">As a registered user, I want to log in and log out of the system.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div class="dashboard-card">
+                <div class="flex items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">User Management</h3>
+                    <span class="indicator ml-2">Core</span>
+                </div>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-green-500 pl-4 py-1">
+                        <h4 class="font-medium">User Profile</h4>
+                        <p class="text-sm text-gray-600">As a user, I want to view and update my profile information.</p>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-4 py-1">
+                        <h4 class="font-medium">Role-Based Access</h4>
+                        <p class="text-sm text-gray-600">As an admin, I want to manage user roles and permissions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Habits Integration Section -->
+            <div class="dashboard-card">
+                <div class="flex items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Habits Integration</h3>
+                    <span class="indicator ml-2">Integration</span>
+                </div>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-purple-500 pl-4 py-1">
+                        <h4 class="font-medium">User Synchronization</h4>
+                        <p class="text-sm text-gray-600">As an admin, I want to sync users between local auth and Habits service.</p>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-4 py-1">
+                        <h4 class="font-medium">Idempotent Sync</h4>
+                        <p class="text-sm text-gray-600">As a system, I want sync operations to be idempotent to prevent duplicates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Endpoints -->
+            <div class="dashboard-card">
+                <div class="flex items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">API Endpoints</h3>
+                    <span class="indicator ml-2">Technical</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endpoint</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">POST</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/api/users</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">Create/update user with idempotency</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">GET</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/api/users</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">List all users</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">GET</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">/api/health</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">Service health check</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white mt-12 border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">
+                    Habits Service - User Stories Documentation
+                </p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

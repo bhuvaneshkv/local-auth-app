@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Trading App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    #userInfo {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #logoutBtn {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #logoutBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .content h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    #niftyTable {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 10px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+
+    tr:hover {
+      background: #f8f9ff;
+      transition: background 0.2s;
+    }
+
+    tr:last-child td:first-child {
+      border-bottom-left-radius: 10px;
+    }
+
+    tr:last-child td:last-child {
+      border-bottom-right-radius: 10px;
+    }
+
+    .positive {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .negative {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 8px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>Dashboard</h1>
+      <div id="userInfo">Loading...</div>
+    </div>
+    <div class="nav-buttons">
+      <a href="affirmations.html" class="btn btn-secondary">Success Affirmations</a>
+      <a href="indicator-view.html" class="btn btn-secondary">Indicators</a>
+      <a href="affirmation-video.html" class="btn btn-secondary">Affirmation Video</a>
+      <a href="fno.html" class="btn btn-secondary">Futures & Options</a>
+      <a href="api.html" class="btn btn-secondary">API</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Nifty 50</h2>
+    <div id="niftyTable" class="loading">Loading Nifty 50...</div>
+  </div>
+
+<script>
+async function loadUser() {
+  const res = await fetch("/api/me");
+  if (res.status === 401) {
+    // Not logged in -> redirect to login page
+    location.href = "index.html";
+    return;
+  }
+
+  const j = await res.json();
+  document.getElementById("userInfo").innerText =
+    "Welcome, " + (j.user.name || j.user.email);
+}
+
+document.getElementById("logoutBtn").onclick = async () => {
+  await fetch("/api/logout", { method: "POST" });
+  location.href = "index.html";
+};
+
+loadUser();
+</script>
+
+<script>
+async function loadNifty(){
+  // Add timestamp to bypass browser cache
+  const r = await fetch('/api/nifty50?nocache=1&t=' + Date.now());
+  const j = await r.json();
+  const data = j.data || [];
+  const container = document.getElementById('niftyTable');
+  
+  if (data.length === 0) {
+    container.innerHTML = '<div class="loading">No data available</div>';
+    return;
+  }
+  
+  let html = '<table><tr><th>Symbol</th><th>Name</th><th>LTP</th><th>LTP Date</th><th>1M LTP</th><th>1M LTP Date</th><th>1M %</th></tr>';
+  data.forEach(row=>{
+    // Handle rows with errors
+    if (row.error) {
+      const errorType = row.error === 'delisted' ? 'Delisted' : 'Error';
+      const errorColor = row.error === 'delisted' ? '#f59e0b' : '#ef4444';
+      html += `<tr style="opacity: 0.7;">
+        <td><strong>${row.symbol}</strong></td>
+        <td colspan="6" style="color:${errorColor}; font-style: italic;">${errorType}: ${row.errorMsg || 'Failed to fetch'}</td>
+      </tr>`;
+    } else {
+      const pctChange = row.pct_change_1m != null ? Number(row.pct_change_1m) : null;
+      const pctClass = pctChange != null ? (pctChange >= 0 ? 'positive' : 'negative') : '';
+      const pctDisplay = pctChange != null ? (pctChange >= 0 ? '+' : '') + pctChange.toFixed(2) + '%' : 'N/A';
+      
+      // Format dates
+      const formatDate = (date) => {
+        if (!date) return 'N/A';
+        try {
+          const d = new Date(date);
+          if (isNaN(d.getTime())) return 'N/A';
+          return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        } catch (e) {
+          return 'N/A';
+        }
+      };
+      
+      html += `<tr>
+        <td><strong>${row.symbol}</strong></td>
+        <td>${row.name||''}</td>
+        <td><strong>₹${row.ltp!=null?Number(row.ltp).toFixed(2):'N/A'}</strong></td>
+        <td style="font-size: 12px; color: #666;">${formatDate(row.ltp_date)}</td>
+        <td>₹${row.ltp_1m!=null?Number(row.ltp_1m).toFixed(2):'N/A'}</td>
+        <td style="font-size: 12px; color: #666;">${formatDate(row.ltp_1m_date)}</td>
+        <td class="${pctClass}">${pctDisplay}</td>
+      </tr>`;
+    }
+  });
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+loadNifty();
+
+// Auto-refresh Nifty data every 15 seconds (near real-time)
+let niftyRefreshTimer = null;
+function startNiftyAutoRefresh() {
+  if (niftyRefreshTimer) clearInterval(niftyRefreshTimer);
+  niftyRefreshTimer = setInterval(() => {
+    loadNifty();
+  }, 15000);
+}
+startNiftyAutoRefresh();
+
+// Cleanup timer on page unload
+window.addEventListener('beforeunload', () => {
+  if (niftyRefreshTimer) clearInterval(niftyRefreshTimer);
+});
+</script>
+
+
+</body>
+</html>

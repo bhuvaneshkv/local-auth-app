@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Habits - Test UI</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    button { padding: 8px 12px; margin-right: 8px; }
+    input { padding: 8px; }
+    pre { background: #f8f8f8; padding: 12px; border-radius: 6px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Habits Service - Test UI</h1>
+  <div class="card">
+    <h3>Auth</h3>
+    <div>
+      <input id="email" placeholder="email" style="width:260px" />
+      <button id="btnLogin">Login</button>
+      <button id="btnMe">Me</button>
+      <button id="btnLogout">Logout</button>
+    </div>
+    <div id="authMsg" style="margin-top:8px;color:#555"></div>
+  </div>
+
+  <div class="card">
+    <h3>Users</h3>
+    <button id="btnList">List Users</button>
+    <pre id="out"></pre>
+  </div>
+
+  <script>
+    async function api(path, opts={}) {
+      const res = await fetch(path, { credentials: 'include', ...opts });
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } catch { json = { raw: text }; }
+      return { status: res.status, json };
+    }
+
+    document.getElementById('btnLogin').onclick = async () => {
+      const email = document.getElementById('email').value.trim();
+      const r = await api('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+      document.getElementById('authMsg').textContent = `Login status: ${r.status}`;
+    };
+    document.getElementById('btnMe').onclick = async () => {
+      const r = await api('/api/me');
+      document.getElementById('authMsg').textContent = `Me status: ${r.status}`;
+      document.getElementById('out').textContent = JSON.stringify(r.json, null, 2);
+    };
+    document.getElementById('btnLogout').onclick = async () => {
+      const r = await api('/api/logout', { method: 'POST' });
+      document.getElementById('authMsg').textContent = `Logout status: ${r.status}`;
+    };
+    document.getElementById('btnList').onclick = async () => {
+      const r = await api('/api/users');
+      document.getElementById('out').textContent = JSON.stringify(r.json, null, 2);
+    };
+  </script>
+</body>
+</html>

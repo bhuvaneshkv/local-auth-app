@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicator View - Nifty 50 - Trading App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      min-height: 100vh; 
+      padding: 20px; 
+      color: #333;
+    }
+    
+    .header { 
+      background: white; 
+      border-radius: 15px; 
+      padding: 25px 30px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      gap: 15px; 
+    }
+    
+    .header h1 { 
+      color: #333; 
+      font-size: 28px; 
+      font-weight: 700; 
+    }
+    
+    .nav-buttons { 
+      display: flex; 
+      gap: 10px; 
+      flex-wrap: wrap;
+    }
+    
+    .btn { 
+      padding: 10px 20px; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 14px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: transform 0.2s, box-shadow 0.2s; 
+      text-decoration: none; 
+      display: inline-block; 
+    }
+    
+    .btn-secondary { 
+      background: #e0e0e0; 
+      color: #333; 
+    }
+    
+    .btn-primary { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+    }
+    
+    .btn:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+    }
+    
+    #logoutBtn { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+    }
+    
+    .content { 
+      background: white; 
+      border-radius: 15px; 
+      padding: 30px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+      margin-bottom: 30px;
+    }
+    
+    .content h2 { 
+      color: #333; 
+      font-size: 24px; 
+      margin-bottom: 20px; 
+      font-weight: 700; 
+    }
+    
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .filter-group label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    select, input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 150px;
+    }
+    
+    .stocks-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .stocks-table th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    
+    .stocks-table th:first-child {
+      border-top-left-radius: 10px;
+    }
+    
+    .stocks-table th:last-child {
+      border-top-right-radius: 10px;
+    }
+    
+    .stocks-table td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    
+    .stocks-table tr:hover {
+      background: #f8f9ff;
+      transition: background 0.2s;
+    }
+    
+    .positive {
+      color: #10b981;
+    }
+    
+    .negative {
+      color: #ef4444;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 16px;
+    }
+    
+    .refresh-btn {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    
+    .refresh-btn:hover {
+      background: #0d9f6e;
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        margin-top: 15px;
+      }
+      
+      .btn {
+        flex: 1;
+        text-align: center;
+      }
+      
+      .stocks-table {
+        font-size: 12px;
+      }
+      
+      .stocks-table th, 
+      .stocks-table td {
+        padding: 8px 6px;
+      }
+      
+      .filters {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      select, input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Nifty 50 Stocks Analysis</h1>
+    <div class="nav-buttons">
+      <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      <a href="indicator-view.html" class="btn btn-secondary">Indicators</a>
+      <a href="affirmation-video.html" class="btn btn-secondary">Affirmation Video</a>
+      <a href="fno.html" class="btn btn-secondary">Futures & Options</a>
+      <a href="api.html" class="btn btn-secondary">API</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2>Nifty 50 Stocks with Technical Indicators</h2>
+      <button id="refreshBtn" class="refresh-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93.9 6.74 2.5l-2.24 2.24"></path>
+          <path d="M16 2v4h4"></path>
+        </svg>
+        Refresh Data
+      </button>
+    </div>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="sectorFilter">Sector</label>
+        <select id="sectorFilter">
+          <option value="">All Sectors</option>
+          <!-- Will be populated by JavaScript -->
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="priceFilter">Price Change %</label>
+        <select id="priceFilter">
+          <option value="all">All</option>
+          <option value="positive">Positive</option>
+          <option value="negative">Negative</option>
+          <option value="over5">> 5%</option>
+          <option value="under5">< 5%</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="maFilter">MA 200 Position</label>
+        <select id="maFilter">
+          <option value="all">All</option>
+          <option value="above">Price > MA 200</option>
+          <option value="below">Price < MA 200</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="searchStock">Search Stock</label>
+        <input type="text" id="searchStock" placeholder="Stock name or symbol">
+      </div>
+    </div>
+    
+    <div id="stocksTableContainer">
+      <table class="stocks-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>LTP</th>
+            <th>Change %</th>
+            <th>MA 200</th>
+            <th>MA 200 %</th>
+            <th>Sector</th>
+            <th>Last Updated</th>
+          </tr>
+        </thead>
+        <tbody id="stocksTableBody">
+          <tr>
+            <td colspan="8" class="loading">Loading stock data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Nifty 50 stocks with their sectors
+    const nifty50Stocks = [
+      { symbol: 'RELIANCE', name: 'Reliance Industries', sector: 'Oil & Gas' },
+      { symbol: 'TCS', name: 'Tata Consultancy Services', sector: 'IT' },
+      { symbol: 'HDFCBANK', name: 'HDFC Bank', sector: 'Banking' },
+      { symbol: 'ICICIBANK', name: 'ICICI Bank', sector: 'Banking' },
+      { symbol: 'HINDUNILVR', name: 'Hindustan Unilever', sector: 'FMCG' },
+      { symbol: 'INFY', name: 'Infosys', sector: 'IT' },
+      { symbol: 'ITC', name: 'ITC Limited', sector: 'FMCG' },
+      { symbol: 'BHARTIARTL', name: 'Bharti Airtel', sector: 'Telecom' },
+      { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', sector: 'Banking' },
+      { symbol: 'LT', name: 'Larsen & Toubro', sector: 'Construction' },
+      { symbol: 'AXISBANK', name: 'Axis Bank', sector: 'Banking' },
+      { symbol: 'HCLTECH', name: 'HCL Technologies', sector: 'IT' },
+      { symbol: 'SBIN', name: 'State Bank of India', sector: 'Banking' },
+      { symbol: 'BAJFINANCE', name: 'Bajaj Finance', sector: 'Financial Services' },
+      { symbol: 'ASIANPAINT', name: 'Asian Paints', sector: 'Paints' },
+      { symbol: 'MARUTI', name: 'Maruti Suzuki', sector: 'Automobile' },
+      { symbol: 'TITAN', name: 'Titan Company', sector: 'Consumer Goods' },
+      { symbol: 'SUNPHARMA', name: 'Sun Pharmaceutical', sector: 'Pharma' },
+      { symbol: 'TATASTEEL', name: 'Tata Steel', sector: 'Metals' },
+      { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv', sector: 'Financial Services' },
+      { symbol: 'ADANIPORTS', name: 'Adani Ports', sector: 'Infrastructure' },
+      { symbol: 'NTPC', name: 'NTPC', sector: 'Power' },
+      { symbol: 'ULTRACEMCO', name: 'UltraTech Cement', sector: 'Cement' },
+      { symbol: 'POWERGRID', name: 'Power Grid Corp', sector: 'Power' },
+      { symbol: 'NESTLEIND', name: 'Nestle India', sector: 'FMCG' },
+      { symbol: 'TATAMOTORS', name: 'Tata Motors', sector: 'Automobile' },
+      { symbol: 'BRITANNIA', name: 'Britannia', sector: 'FMCG' },
+      { symbol: 'INDUSINDBK', name: 'IndusInd Bank', sector: 'Banking' },
+      { symbol: 'HDFCLIFE', name: 'HDFC Life', sector: 'Insurance' },
+      { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto', sector: 'Automobile' },
+      { symbol: 'DIVISLAB', name: 'Divi\'s Labs', sector: 'Pharma' },
+      { symbol: 'DRREDDY', name: 'Dr. Reddy\'s', sector: 'Pharma' },
+      { symbol: 'GRASIM', name: 'Grasim', sector: 'Cement' },
+      { symbol: 'HINDALCO', name: 'Hindalco', sector: 'Metals' },
+      { symbol: 'JSWSTEEL', name: 'JSW Steel', sector: 'Metals' },
+      { symbol: 'TATACONSUM', name: 'Tata Consumer', sector: 'FMCG' },
+      { symbol: 'TECHM', name: 'Tech Mahindra', sector: 'IT' },
+      { symbol: 'APOLLOHOSP', name: 'Apollo Hospitals', sector: 'Healthcare' },
+      { symbol: 'ADANIENT', name: 'Adani Enterprises', sector: 'Conglomerate' },
+      { symbol: 'CIPLA', name: 'Cipla', sector: 'Pharma' },
+      { symbol: 'SBILIFE', name: 'SBI Life', sector: 'Insurance' },
+      { symbol: 'WIPRO', name: 'Wipro', sector: 'IT' },
+      { symbol: 'HDFCBANK.NS', name: 'HDFC Bank', sector: 'Banking' },
+      { symbol: 'ONGC', name: 'ONGC', sector: 'Oil & Gas' },
+      { symbol: 'COALINDIA', name: 'Coal India', sector: 'Mining' },
+      { symbol: 'TATAPOWER', name: 'Tata Power', sector: 'Power' },
+      { symbol: 'EICHERMOT', name: 'Eicher Motors', sector: 'Automobile' },
+      { symbol: 'UPL', name: 'UPL', sector: 'Chemicals' },
+      { symbol: 'BPCL', name: 'BPCL', sector: 'Oil & Gas' },
+      { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp', sector: 'Automobile' },
+      { symbol: 'HINDCOPPER', name: 'Hindustan Copper', sector: 'Metals' }
+    ];
+
+    let stockData = [];
+    let filteredStocks = [];
+    
+    // DOM Elements
+    const stocksTableBody = document.getElementById('stocksTableBody');
+    const sectorFilter = document.getElementById('sectorFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const maFilter = document.getElementById('maFilter');
+    const searchStock = document.getElementById('searchStock');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Initialize the page
+    async function init() {
+      try {
+        // Check if user is logged in
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) return;
+        
+        // Populate sector filter
+        populateSectorFilter();
+        
+        // Load stock data
+        await loadStockData();
+        
+        // Set up event listeners
+        setupEventListeners();
+      } catch (error) {
+        console.error('Initialization error:', error);
+        showError('Failed to initialize the application. Please try again.');
+      }
+    }
+    
+    // Check if user is authenticated
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.status === 401) {
+          // Not logged in -> redirect to login page
+          window.location.href = "index.html";
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = "index.html";
+        return false;
+      }
+    }
+    
+    // Populate sector filter dropdown
+    function populateSectorFilter() {
+      const sectors = [...new Set(nifty50Stocks.map(stock => stock.sector))].sort();
+      
+      sectors.forEach(sector => {
+        const option = document.createElement('option');
+        option.value = sector;
+        option.textContent = sector;
+        sectorFilter.appendChild(option);
+      });
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+      // Filter change events
+      sectorFilter.addEventListener('change', applyFilters);
+      priceFilter.addEventListener('change', applyFilters);
+      maFilter.addEventListener('change', applyFilters);
+      searchStock.addEventListener('input', applyFilters);
+      
+      // Button click events
+      refreshBtn.addEventListener('click', loadStockData);
+      logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    // Function to calculate MA200 from historical data
+    async function calculateMA200(symbol) {
+      try {
+        // Get today's date and date 200 trading days ago (approximately 1 year)
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1); // Go back 1 year to ensure we have enough data
+        
+        // Format dates as YYYY-MM-DD
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        
+        // Fetch historical data
+        const response = await fetch(`/api/historical?symbol=${symbol}&from=${formatDate(startDate)}&to=${formatDate(endDate)}`);
+        
+        if (!response.ok) {
+          console.warn(`Failed to fetch historical data for ${symbol}`);
+          return null;
+        }
+        
+        const data = await response.json();
+        if (!data || !data.data || data.data.length < 200) {
+          console.warn(`Not enough historical data for ${symbol}`);
+          return null;
+        }
+        
+        // Calculate 200-day simple moving average
+        const closes = data.data.map(day => day.close).slice(-200); // Get last 200 days
+        const sum = closes.reduce((a, b) => a + b, 0);
+        return sum / closes.length;
+        
+      } catch (error) {
+        console.error(`Error calculating MA200 for ${symbol}:`, error);
+        return null;
+      }
+    }
+
+    // Load stock data from API (uses server-calculated MA200)
+    async function loadStockData() {
+      try {
+        showLoading(true);
+        
+        // Get indicators (LTP + MA200) for NIFTY50 from server
+        const response = await fetch('/api/indicators?nifty50=1&nocache=1');
+        if (!response.ok) {
+          throw new Error('Failed to fetch indicators');
+        }
+        const result = await response.json();
+        console.log('Indicators API Response:', result);
+        const data = result.data || [];
+        
+        // Process the data
+        stockData = data.map(item => {
+          if (!item || item.error) return null;
+          
+          // item.symbol is with .NS; normalize to base symbol for matching
+          const baseSymbol = item.symbol ? item.symbol.replace('.NS','') : '';
+          const stockInfo = nifty50Stocks.find(s => baseSymbol && (s.symbol === baseSymbol || baseSymbol.startsWith(s.symbol))) || {};
+          
+          const currentPrice = Number(item.ltp) || 0;
+          const ma200 = Number(item.ma200) || 0;
+          const ma200Percent = (ma200 > 0 && currentPrice > 0) ? ((currentPrice - ma200) / ma200) * 100 : 0;
+          
+          // Per request: Change % should show difference between LTP and MA200
+          const changePercent = ma200Percent;
+          
+          return {
+            symbol: baseSymbol || 'N/A',
+            name: stockInfo.name || item.name || baseSymbol || 'N/A',
+            sector: stockInfo.sector || 'N/A',
+            price: currentPrice,
+            change: currentPrice - ma200,
+            changePercent: changePercent,
+            ma200: ma200,
+            ma200Percent: ma200Percent,
+            lastUpdated: new Date().toLocaleTimeString()
+          };
+        }).filter(Boolean);
+        
+        if (stockData.length === 0) {
+          throw new Error('No stock data available');
+        }
+        
+        applyFilters();
+      } catch (error) {
+        console.error('Error loading stock data:', error);
+        showError('Failed to load stock data. Please try again.');
+      } finally {
+        showLoading(false);
+      }
+    }
+    
+    // Apply all filters
+    function applyFilters() {
+      const sector = sectorFilter.value;
+      const priceFilterValue = priceFilter.value;
+      const maFilterValue = maFilter.value;
+      const searchTerm = searchStock.value.toLowerCase();
+      
+      filteredStocks = stockData.filter(stock => {
+        // Filter by sector
+        if (sector && stock.sector !== sector) return false;
+        
+        // Filter by price change
+        if (priceFilterValue === 'positive' && stock.changePercent <= 0) return false;
+        if (priceFilterValue === 'negative' && stock.changePercent >= 0) return false;
+        if (priceFilterValue === 'over5' && stock.changePercent <= 5) return false;
+        if (priceFilterValue === 'under5' && stock.changePercent >= 5) return false;
+        
+        // Filter by MA 200 position
+        if (maFilterValue === 'above' && stock.ma200Percent <= 0) return false;
+        if (maFilterValue === 'below' && stock.ma200Percent >= 0) return false;
+        
+        // Filter by search term
+        if (searchTerm && 
+            !stock.symbol.toLowerCase().includes(searchTerm) && 
+            !stock.name.toLowerCase().includes(searchTerm)) {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      renderStocksTable();
+    }
+    
+    // Render stocks table
+    function renderStocksTable() {
+      if (filteredStocks.length === 0) {
+        stocksTableBody.innerHTML = '<tr><td colspan="8" class="loading">No stocks match the current filters</td></tr>';
+        return;
+      }
+      
+      // Sort by MA200% in descending order (stocks trading above MA200 first)
+      const sortedStocks = [...filteredStocks].sort((a, b) => b.ma200Percent - a.ma200Percent);
+      
+      stocksTableBody.innerHTML = sortedStocks.map(stock => `
+        <tr>
+          <td><strong>${stock.symbol}</strong></td>
+          <td>${stock.name}</td>
+          <td>${stock.price.toFixed(2)}</td>
+          <td class="${stock.changePercent >= 0 ? 'positive' : 'negative'}">
+            ${stock.changePercent >= 0 ? '+' : ''}${stock.changePercent.toFixed(2)}%
+          </td>
+          <td>${stock.ma200.toFixed(2)}</td>
+          <td class="${stock.ma200Percent >= 0 ? 'positive' : 'negative'}">
+            ${stock.ma200Percent >= 0 ? '+' : ''}${stock.ma200Percent.toFixed(2)}%
+          </td>
+          <td>${stock.sector}</td>
+          <td>${stock.lastUpdated}</td>
+        </tr>
+      `).join('');
+    }
+    
+    // Show loading state
+    function showLoading(isLoading) {
+      if (isLoading) {
+        stocksTableBody.innerHTML = '<tr><td colspan="8" class="loading">Loading stock data...</td></tr>';
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93.9 6.74 2.5l-2.24 2.24"></path>
+          </svg>
+          Loading...
+        `;
+      } else {
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93.9 6.74 2.5l-2.24 2.24"></path>
+            <path d="M16 2v4h4"></path>
+          </svg>
+          Refresh Data
+        `;
+      }
+    }
+    
+    // Show error message
+    function showError(message) {
+      stocksTableBody.innerHTML = `<tr><td colspan="8" style="color: #ef4444; text-align: center; padding: 20px;">${message}</td></tr>`;
+    }
+    
+    // Handle logout
+    function handleLogout() {
+      fetch('/api/logout', { method: 'POST' })
+        .then(() => {
+          window.location.href = '/index.html';
+        })
+        .catch(error => {
+          console.error('Logout failed:', error);
+          window.location.href = '/index.html';
+        });
+    }
+    
+    // Initialize the page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

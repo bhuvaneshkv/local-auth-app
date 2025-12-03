@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management API - Trading App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      background: white;
+      border-radius: 15px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 28px; margin-bottom: 10px; }
+    .subtitle { color: #666; margin-bottom: 20px; }
+    .section { margin-top: 24px; }
+    h2 { font-size: 20px; margin-bottom: 10px; }
+    h3 { font-size: 16px; margin: 16px 0 8px; }
+    .card { border: 1px solid #eee; border-radius: 10px; padding: 16px; margin: 14px 0; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .get { background: #e0f2fe; color: #0369a1; }
+    .post { background: #dcfce7; color: #166534; }
+    .delete { background: #fee2e2; color: #991b1b; }
+    .url { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f7f7fb; padding: 6px 10px; border-radius: 6px; display: inline-block; }
+    pre { background: #0b1020; color: #e5e7eb; padding: 12px; border-radius: 8px; overflow: auto; font-size: 13px; line-height: 1.4; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ul { margin-left: 18px; }
+    li { margin: 6px 0; }
+    .note { background: #f8fafc; border-left: 4px solid #60a5fa; padding: 10px 12px; border-radius: 6px; color: #374151; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .nav { display: flex; gap: 8px; }
+    .btn { padding: 8px 14px; border-radius: 8px; background: #e0e0e0; color: #333; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>User Management API</h1>
+        <div class="subtitle">Base URL: <span class="url">http://localhost:3000</span></div>
+      </div>
+      <div class="nav">
+        <a class="btn" href="dashboard.html">Dashboard</a>
+        <a class="btn" href="indicator-view.html">Indicators</a>
+        <a class="btn" href="fno.html">F&O</a>
+      </div>
+    </div>
+
+    <div class="note">
+      Authentication model: Session cookie (via express-session). Clients must handle cookies to persist login state. CORS is not configured for cross-origin browsers; server-to-server requests are recommended for 3rd parties unless you add CORS.
+    </div>
+
+    <div class="section">
+      <h2>Endpoints</h2>
+
+      <div class="card">
+        <div><span class="badge post">POST</span> <span class="url">/api/signup</span></div>
+        <p>Create a new user.</p>
+        <h3>Request (JSON)</h3>
+        <pre><code>{
+  "name": "John Doe",        // optional
+  "email": "john@example.com",
+  "password": "your-password",
+  "role": "admin"            // optional; only honored if current session is admin
+}</code></pre>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "success": true
+}</code></pre>
+        <h3>Response 400</h3>
+        <pre><code>{
+  "error": "email already used"
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -c cookies.txt -H "Content-Type: application/json" \
+  -X POST http://localhost:3000/api/signup \
+  -d '{"name":"John","email":"john@example.com","password":"secret"}'</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge post">POST</span> <span class="url">/api/login</span></div>
+        <p>Authenticate a user and start a session.</p>
+        <h3>Request (JSON)</h3>
+        <pre><code>{
+  "email": "john@example.com",
+  "password": "your-password"
+}</code></pre>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "success": true
+}</code></pre>
+        <h3>Response 400</h3>
+        <pre><code>{
+  "error": "invalid email or password"
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -c cookies.txt -b cookies.txt -H "Content-Type: application/json" \
+  -X POST http://localhost:3000/api/login \
+  -d '{"email":"john@example.com","password":"secret"}'</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge get">GET</span> <span class="url">/api/me</span></div>
+        <p>Get the current authenticated user's profile. Requires a valid session cookie.</p>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}</code></pre>
+        <h3>Response 401</h3>
+        <pre><code>{
+  "error": "unauthorized"
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -b cookies.txt http://localhost:3000/api/me</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge post">POST</span> <span class="url">/api/logout</span></div>
+        <p>Terminate the current session.</p>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "success": true
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -c cookies.txt -b cookies.txt -X POST http://localhost:3000/api/logout</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li><strong>Auth</strong>: Session-based; send and store cookies (use -c/-b flags in curl).</li>
+        <li><strong>Password storage</strong>: bcrypt with salted hashes.</li>
+        <li><strong>Rate limiting/CORS</strong>: Not enabled by default. Add before exposing publicly.</li>
+        <li><strong>Production</strong>: Use HTTPS and secure cookies (httpOnly, sameSite, secure).</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Roles</h2>
+      <div class="card">
+        <div><span class="badge get">GET</span> <span class="url">/api/roles</span></div>
+        <p>Public endpoint returning supported roles.</p>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "roles": ["user", "admin"]
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i http://localhost:3000/api/roles</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Admin User Management Endpoints</h2>
+      <div class="note">
+        Admin-only. Requires authentication and admin role. These endpoints are currently not implemented in the server code; the definitions below are proposed contracts. Implementing them will require adding role checks, input validation, and CSRF protection.
+      </div>
+
+      <div class="card">
+        <div><span class="badge get">GET</span> <span class="url">/api/users</span></div>
+        <p>List users with basic profile fields. Supports pagination in the future.</p>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "data": [
+    { "id": 1, "name": "John Doe", "email": "john@example.com" },
+    { "id": 2, "name": "Jane", "email": "jane@example.com" }
+  ]
+}</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -b cookies.txt http://localhost:3000/api/users</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge get">GET</span> <span class="url">/api/users/:id</span></div>
+        <p>Get a single user by ID.</p>
+        <h3>Response 200</h3>
+        <pre><code>{
+  "user": { "id": 1, "name": "John Doe", "email": "john@example.com" }
+}</code></pre>
+        <h3>Response 404</h3>
+        <pre><code>{ "error": "not_found" }</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -b cookies.txt http://localhost:3000/api/users/1</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge post">POST</span> <span class="url">/api/users</span></div>
+        <p>Create a user (admin-created account).</p>
+        <h3>Request (JSON)</h3>
+        <pre><code>{
+  "name": "Alice",
+  "email": "alice@example.com",
+  "password": "Temp#1234",
+  "role": "user"            // "user" or "admin" (admin role required to create admin)
+}</code></pre>
+        <h3>Response 201</h3>
+        <pre><code>{ "id": 3, "name": "Alice", "email": "alice@example.com" }</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -c cookies.txt -b cookies.txt -H "Content-Type: application/json" \
+  -X POST http://localhost:3000/api/users \
+  -d '{"name":"Alice","email":"alice@example.com","password":"Temp#1234","role":"user"}'</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge post">PATCH</span> <span class="url">/api/users/:id</span></div>
+        <p>Update user attributes (name, email, password).</p>
+        <h3>Request (JSON)</h3>
+        <pre><code>{
+  "name": "Alice Updated",
+  "email": "alice2@example.com",
+  "password": "New#Pass1"   // optional
+}</code></pre>
+        <h3>Response 200</h3>
+        <pre><code>{ "id": 3, "name": "Alice Updated", "email": "alice2@example.com" }</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -b cookies.txt -H "Content-Type: application/json" \
+  -X PATCH http://localhost:3000/api/users/3 \
+  -d '{"name":"Alice Updated","email":"alice2@example.com"}'</code></pre>
+      </div>
+
+      <div class="card">
+        <div><span class="badge delete">DELETE</span> <span class="url">/api/users/:id</span></div>
+        <p>Delete a user by ID.</p>
+        <h3>Response 200</h3>
+        <pre><code>{ "success": true }</code></pre>
+        <h3>cURL</h3>
+        <pre><code>curl -i -b cookies.txt -X DELETE http://localhost:3000/api/users/3</code></pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Interactive API Explorer</h2>
+      <div class="note">Use this to test endpoints directly in the browser. Session cookies are handled automatically since this page is served from the same origin.</div>
+
+      <div class="card">
+        <h3>Session</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin:8px 0;">
+          <div>
+            <label>Email</label>
+            <input id="ae_email" type="email" placeholder="john@example.com" style="padding:8px 10px; border:1px solid #ddd; border-radius:6px;">
+          </div>
+          <div>
+            <label>Password</label>
+            <input id="ae_password" type="password" placeholder="••••••••" style="padding:8px 10px; border:1px solid #ddd; border-radius:6px;">
+          </div>
+          <button id="ae_signup" class="btn">Signup</button>
+          <button id="ae_login" class="btn">Login</button>
+          <button id="ae_me" class="btn">Me</button>
+          <button id="ae_logout" class="btn">Logout</button>
+          <button id="ae_roles" class="btn">Roles</button>
+        </div>
+        <div id="ae_status" class="note" style="display:none;"></div>
+      </div>
+
+      <div class="card">
+        <h3>Custom Request</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin:8px 0;">
+          <select id="ae_method" style="padding:8px 10px; border:1px solid #ddd; border-radius:6px;">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PATCH</option>
+            <option>DELETE</option>
+          </select>
+          <input id="ae_url" type="text" value="/api/me" style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:6px;" />
+          <button id="ae_send" class="btn">Send</button>
+        </div>
+        <label>Request Body (JSON)</label>
+        <textarea id="ae_body" rows="5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-family: ui-monospace, monospace;">{
+  
+}</textarea>
+      </div>
+
+      <div class="card">
+        <h3>Response</h3>
+        <div id="ae_response_meta" style="color:#666; font-size:13px; margin-bottom:6px;"></div>
+        <pre><code id="ae_response">(no response yet)</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function getCurrentUser() {
+      try {
+        const res = await fetch('/api/me');
+        if (!res.ok) return null;
+        const j = await res.json();
+        return j && j.user ? j.user : null;
+      } catch { return null; }
+    }
+
+    function setDisabled(el, disabled) {
+      if (!el) return;
+      el.disabled = !!disabled;
+      if (disabled) {
+        el.setAttribute('aria-disabled', 'true');
+      } else {
+        el.removeAttribute('aria-disabled');
+      }
+    }
+
+    function setExplorerEnabled(isAdmin, loggedIn) {
+      // Inputs and buttons
+      const sendBtn = document.getElementById('ae_send');
+      const methodSel = document.getElementById('ae_method');
+      const urlInput = document.getElementById('ae_url');
+      const bodyText = document.getElementById('ae_body');
+      const meBtn = document.getElementById('ae_me');
+      const logoutBtn = document.getElementById('ae_logout');
+      const signupBtn = document.getElementById('ae_signup');
+      const loginBtn = document.getElementById('ae_login');
+
+      // Admins: everything enabled
+      if (isAdmin) {
+        [sendBtn, methodSel, urlInput, bodyText, meBtn, logoutBtn].forEach(el => setDisabled(el, false));
+        setDisabled(signupBtn, false);
+        setDisabled(loginBtn, false);
+        setStatus('Admin access granted. You can test APIs.');
+        return;
+      }
+
+      // Non-admin: restrict explorer; allow auth buttons to switch to admin account
+      [sendBtn, methodSel, urlInput, bodyText].forEach(el => setDisabled(el, true));
+      setDisabled(meBtn, !loggedIn ? true : false); // allow Me when logged in
+      setDisabled(logoutBtn, !loggedIn);
+      setDisabled(signupBtn, false);
+      setDisabled(loginBtn, false);
+
+      if (!loggedIn) {
+        setStatus('Not logged in. Login with an admin account to enable API testing.');
+      } else {
+        setStatus('Only admins can test APIs in the UI. You are logged in without admin role.', 'error');
+      }
+    }
+
+    async function gateByRole() {
+      const user = await getCurrentUser();
+      const isAdmin = !!(user && user.role === 'admin');
+      const loggedIn = !!user;
+      setExplorerEnabled(isAdmin, loggedIn);
+    }
+
+    function setStatus(msg, type='info'){
+      const el = document.getElementById('ae_status');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+      el.style.borderLeftColor = type === 'error' ? '#ef4444' : '#60a5fa';
+    }
+
+    async function doRequest(method, url, body) {
+      const init = { method, headers: {} };
+      if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+        init.headers['Content-Type'] = 'application/json';
+        init.body = JSON.stringify(body);
+      }
+      const t0 = Date.now();
+      const res = await fetch(url, init);
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } catch { json = text; }
+      const dt = Date.now() - t0;
+      document.getElementById('ae_response_meta').textContent = `Status: ${res.status} ${res.statusText} • ${dt} ms`;
+      document.getElementById('ae_response').textContent = typeof json === 'string' ? json : JSON.stringify(json, null, 2);
+      return { res, json };
+    }
+
+    // Buttons
+    document.getElementById('ae_signup').addEventListener('click', async ()=>{
+      setStatus('Signing up...');
+      const email = document.getElementById('ae_email').value.trim();
+      const password = document.getElementById('ae_password').value;
+      const name = email.split('@')[0] || 'User';
+      try {
+        await doRequest('POST', '/api/signup', { name, email, password });
+        setStatus('Signup request sent. If email exists, server will return an error.');
+        await gateByRole();
+      } catch(e){ setStatus('Signup failed', 'error'); }
+    });
+
+    document.getElementById('ae_login').addEventListener('click', async ()=>{
+      setStatus('Logging in...');
+      const email = document.getElementById('ae_email').value.trim();
+      const password = document.getElementById('ae_password').value;
+      try {
+        await doRequest('POST', '/api/login', { email, password });
+        setStatus('Login done. Session cookie stored.');
+        await gateByRole();
+      } catch(e){ setStatus('Login failed', 'error'); }
+    });
+
+    document.getElementById('ae_me').addEventListener('click', async ()=>{
+      setStatus('Fetching profile...');
+      try {
+        await doRequest('GET', '/api/me');
+        setStatus('Fetched /api/me');
+      } catch(e){ setStatus('Request failed', 'error'); }
+    });
+
+    document.getElementById('ae_logout').addEventListener('click', async ()=>{
+      setStatus('Logging out...');
+      try {
+        await doRequest('POST', '/api/logout');
+        setStatus('Logged out.');
+        await gateByRole();
+      } catch(e){ setStatus('Logout failed', 'error'); }
+    });
+
+    document.getElementById('ae_send').addEventListener('click', async ()=>{
+      const method = document.getElementById('ae_method').value;
+      const url = document.getElementById('ae_url').value.trim() || '/api/me';
+      let body = undefined;
+      if (method !== 'GET' && method !== 'DELETE') {
+        try { body = JSON.parse(document.getElementById('ae_body').value || '{}'); } catch(e){ body = undefined; }
+      }
+      setStatus('Sending request...');
+      try {
+        await doRequest(method, url, body);
+        setStatus('Done');
+      } catch(e){ setStatus('Request failed', 'error'); }
+    });
+
+    // Roles quick call
+    document.getElementById('ae_roles').addEventListener('click', async ()=>{
+      setStatus('Fetching roles...');
+      try {
+        await doRequest('GET', '/api/roles');
+        setStatus('Roles fetched');
+      } catch(e){ setStatus('Failed to fetch roles', 'error'); }
+    });
+
+    // Initialize gate on load
+    document.addEventListener('DOMContentLoaded', gateByRole);
+  </script>
+</body>
+</html>

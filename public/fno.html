@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futures & Options - Trading App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .filters {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filters select, .filters input {
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .filters select:focus, .filters input:focus {
+      border-color: #667eea;
+    }
+
+    .expiry-filter {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .expiry-badge {
+      padding: 6px 12px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .expiry-badge:hover {
+      background: #e0e0e0;
+    }
+
+    .expiry-badge.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+    }
+
+    .expiry-date {
+      font-size: 11px;
+      color: #999;
+      font-weight: normal;
+    }
+
+    .atm-row {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
+      border-left: 4px solid #667eea;
+      font-weight: 600;
+    }
+
+    .atm-row:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
+    }
+
+    .atm-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 16px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tr:hover {
+      background: #f8f9ff;
+    }
+
+    .options-table {
+      overflow-x: auto;
+    }
+
+    .options-table table {
+      min-width: 1000px;
+    }
+
+    .strike-price {
+      font-weight: 700;
+      color: #333;
+      background: #f8f9ff;
+    }
+
+    .call-premium {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .put-premium {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 16px;
+    }
+
+    .error {
+      color: #ef4444;
+      padding: 15px;
+      background: #fee;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+      }
+      
+      .filters select, .filters input {
+        width: 100%;
+      }
+
+      .options-table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Futures & Options</h1>
+    <div class="nav-buttons">
+      <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      <a href="affirmations.html" class="btn btn-secondary">Success Affirmations</a>
+      <a href="affirmation-video.html" class="btn btn-secondary">Affirmation Video</a>
+      <a href="api.html" class="btn btn-secondary">API</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="filters">
+      <select id="symbolFilter">
+        <option value="">All Symbols</option>
+      </select>
+      <input type="text" id="searchFilter" placeholder="Search symbol...">
+    </div>
+    <div id="expiryFilter" class="expiry-filter" style="display: none;">
+      <span style="font-weight: 600; color: #666;">Expiry:</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="futures">Futures</button>
+      <button class="tab active" data-tab="options">Options Chain</button>
+    </div>
+
+    <div id="futuresTab" class="tab-content active">
+      <div id="futuresTable" class="loading">Loading Futures data...</div>
+    </div>
+
+    <div id="optionsTab" class="tab-content">
+      <div id="optionsTable" class="loading">Select a symbol to view options chain</div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tabName + 'Tab').classList.add('active');
+        
+        // Manage polling timers on tab switch
+        if (tabName === 'options') {
+          const selectedSymbol = document.getElementById('symbolFilter').value;
+          if (selectedSymbol) {
+            loadOptions(selectedSymbol);
+            startOptionsAutoRefresh(selectedSymbol);
+          }
+        } else {
+          stopOptionsAutoRefresh();
+        }
+      });
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').onclick = async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = 'index.html';
+    };
+
+    // Load symbols for filter
+    async function loadSymbols() {
+      try {
+        const res = await fetch('/api/nifty50?nocache=1&t=' + Date.now());
+        const json = await res.json();
+        const data = json.data || [];
+        
+        const select = document.getElementById('symbolFilter');
+        data.forEach(item => {
+          if (!item.error) {
+            const option = document.createElement('option');
+            option.value = item.symbol;
+            option.textContent = item.symbol + (item.name ? ' - ' + item.name : '');
+            select.appendChild(option);
+          }
+        });
+        
+        select.addEventListener('change', (e) => {
+          const sym = e.target.value;
+          loadFutures(sym);
+          startFuturesAutoRefresh(sym);
+          if (document.getElementById('optionsTab').classList.contains('active')) {
+            if (sym) {
+              loadOptions(sym);
+              startOptionsAutoRefresh(sym);
+            } else {
+              stopOptionsAutoRefresh();
+            }
+          }
+        });
+        
+        // Initial load and start polling for all (no symbol) futures
+        loadFutures('');
+        startFuturesAutoRefresh('');
+      } catch (err) {
+        console.error('Error loading symbols:', err);
+      }
+    }
+
+    // Load Futures
+    async function loadFutures(symbol = '') {
+      const container = document.getElementById('futuresTable');
+      container.innerHTML = '<div class="loading">Loading Futures data...</div>';
+      
+      try {
+        const url = symbol ? `/api/fno?symbol=${encodeURIComponent(symbol)}&nocache=1&t=${Date.now()}` : `/api/fno?nocache=1&t=${Date.now()}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const data = json.data || [];
+        
+        if (Array.isArray(data)) {
+          // All symbols
+          let html = '<table><tr><th>Symbol</th><th>Name</th><th>Spot Price</th><th>Current Month</th><th>Next Month</th></tr>';
+          data.forEach(item => {
+            if (item.error) {
+              html += `<tr><td>${item.symbol || 'N/A'}</td><td colspan="4" style="color:#ef4444;">${item.errorMsg || 'Error'}</td></tr>`;
+            } else {
+              const futures = item.futures || {};
+              html += `<tr>
+                <td><strong>${item.symbol || 'N/A'}</strong></td>
+                <td>${futures.name || ''}</td>
+                <td>₹${futures.spot_price ? Number(futures.spot_price).toFixed(2) : 'N/A'}</td>
+                <td>₹${futures.futures?.current_month || 'N/A'}</td>
+                <td>₹${futures.futures?.next_month || 'N/A'}</td>
+              </tr>`;
+            }
+          });
+          html += '</table>';
+          container.innerHTML = html;
+        } else {
+          // Single symbol
+          const futures = data.futures || {};
+          let html = '<table><tr><th>Symbol</th><th>Spot Price</th><th>Current Month</th><th>Next Month</th></tr>';
+          html += `<tr>
+            <td><strong>${data.symbol || 'N/A'}</strong></td>
+            <td>₹${futures.spot_price ? Number(futures.spot_price).toFixed(2) : 'N/A'}</td>
+            <td>₹${futures.futures?.current_month || 'N/A'}</td>
+            <td>₹${futures.futures?.next_month || 'N/A'}</td>
+          </tr>`;
+          html += '</table>';
+          container.innerHTML = html;
+        }
+      } catch (err) {
+        container.innerHTML = `<div class="error">Error loading futures: ${err.message}</div>`;
+      }
+    }
+
+    // Load Options
+    async function loadOptions(symbol) {
+      const container = document.getElementById('optionsTable');
+      
+      if (!symbol) {
+        container.innerHTML = '<div class="loading">Please select a symbol to view options chain</div>';
+        return;
+      }
+      
+      container.innerHTML = '<div class="loading">Loading Options chain...</div>';
+      
+      try {
+        const res = await fetch(`/api/fno?symbol=${encodeURIComponent(symbol)}&nocache=1&t=${Date.now()}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const json = await res.json();
+        const data = json.data || {};
+        const options = data.options || {};
+        
+        if (options.error) {
+          container.innerHTML = `<div class="error">Error: ${options.errorMsg || 'Failed to load options'}</div>`;
+          return;
+        }
+        
+        const strikes = options.strikes || [];
+        const expiryDates = options.expiry_dates || [];
+        
+        if (strikes.length === 0) {
+          container.innerHTML = '<div class="loading">No options data available</div>';
+          return;
+        }
+        
+        // Display expiry filter
+        const expiryFilterDiv = document.getElementById('expiryFilter');
+        if (expiryDates.length > 0) {
+          expiryFilterDiv.style.display = 'flex';
+          expiryFilterDiv.innerHTML = '<span style="font-weight: 600; color: #666;">Expiry:</span>';
+          
+          expiryDates.forEach((expiry, idx) => {
+            const badge = document.createElement('span');
+            badge.className = 'expiry-badge' + (idx === 0 ? ' active' : '');
+            badge.dataset.expiry = expiry;
+            badge.textContent = formatExpiryDate(expiry);
+            badge.onclick = () => filterByExpiry(expiry);
+            expiryFilterDiv.appendChild(badge);
+          });
+          
+          // Add "All" option
+          const allBadge = document.createElement('span');
+          allBadge.className = 'expiry-badge';
+          allBadge.dataset.expiry = 'all';
+          allBadge.textContent = 'All';
+          allBadge.onclick = () => filterByExpiry('all');
+          expiryFilterDiv.insertBefore(allBadge, expiryFilterDiv.firstChild.nextSibling);
+        }
+        
+        // Store all strikes for filtering
+        window.allStrikes = strikes;
+        window.currentSpotPrice = options.spot_price || 0;
+        window.currentExpiry = expiryDates[0] || 'all';
+        window.totalOI = options.total_oi || 0;
+        window.totalCallOI = options.total_call_oi || 0;
+        window.totalPutOI = options.total_put_oi || 0;
+        
+        // Render table (will be updated by filterByExpiry)
+        // Note: renderOptionsTable now includes the info section, so we don't need to add it separately
+        renderOptionsTable(strikes, expiryDates[0]);
+      } catch (err) {
+        container.innerHTML = `<div class="error">Error loading options: ${err.message}</div>`;
+      }
+    }
+
+    // Format expiry date
+    function formatExpiryDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    }
+
+    // Filter by expiry
+    function filterByExpiry(expiry) {
+      window.currentExpiry = expiry;
+      
+      // Update badge styles
+      document.querySelectorAll('.expiry-badge').forEach(badge => {
+        badge.classList.remove('active');
+        if (badge.dataset.expiry === expiry) {
+          badge.classList.add('active');
+        }
+      });
+      
+      const filtered = expiry === 'all' 
+        ? window.allStrikes 
+        : window.allStrikes.filter(s => s.expiry === expiry);
+      
+      const expiryDates = window.allStrikes.length > 0 
+        ? [...new Set(window.allStrikes.map(s => s.expiry))].sort()
+        : [];
+      
+      renderOptionsTable(filtered, expiry);
+    }
+
+    // Render options table
+    function renderOptionsTable(strikes, selectedExpiry) {
+      const container = document.getElementById('optionsTable');
+      
+      if (strikes.length === 0) {
+        container.innerHTML = '<div class="loading">No options data for selected expiry</div>';
+        return;
+      }
+      
+      // Get spot price from stored data
+      const spotPrice = window.currentSpotPrice || 0;
+      
+      // Filter strikes by selected expiry
+      const filteredStrikes = window.currentExpiry === 'all' 
+        ? strikes 
+        : strikes.filter(s => s.expiry === window.currentExpiry);
+      
+      if (filteredStrikes.length === 0) {
+        container.innerHTML = '<div class="loading">No options data for selected expiry</div>';
+        return;
+      }
+      
+      // Calculate total OI for filtered strikes (current view)
+      let filteredCallOI = 0;
+      let filteredPutOI = 0;
+      filteredStrikes.forEach(strike => {
+        filteredCallOI += parseInt(strike.call.oi) || 0;
+        filteredPutOI += parseInt(strike.put.oi) || 0;
+      });
+      const filteredTotalOI = filteredCallOI + filteredPutOI;
+      
+      // Find ATM strike (closest to spot price)
+      let atmStrike = null;
+      let minDiff = Infinity;
+      
+      // Get unique strikes
+      const uniqueStrikes = [...new Set(filteredStrikes.map(s => s.strike))];
+      uniqueStrikes.forEach(strikePrice => {
+        const diff = Math.abs(strikePrice - spotPrice);
+        if (diff < minDiff) {
+          minDiff = diff;
+          atmStrike = strikePrice;
+        }
+      });
+      
+      // Group by strike to avoid duplicates
+      const strikeMap = new Map();
+      filteredStrikes.forEach(strike => {
+        const key = strike.strike;
+        if (!strikeMap.has(key)) {
+          strikeMap.set(key, strike);
+        }
+      });
+      
+      let html = '<div class="options-table"><table>';
+      html += '<tr><th>Strike</th><th>Expiry</th><th>Call Premium</th><th>Call OI</th><th>Call Volume</th><th>Put Premium</th><th>Put OI</th><th>Put Volume</th></tr>';
+      
+      Array.from(strikeMap.keys()).sort((a, b) => a - b).forEach(strikePrice => {
+        const strike = strikeMap.get(strikePrice);
+        const isATM = strikePrice === atmStrike;
+        const rowClass = isATM ? 'atm-row' : '';
+        const atmLabel = isATM ? '<span class="atm-badge">ATM</span>' : '';
+        
+        html += `<tr class="${rowClass}">
+          <td class="strike-price">${strike.strike}${atmLabel}</td>
+          <td class="expiry-date">${formatExpiryDate(strike.expiry)}</td>
+          <td class="call-premium">₹${strike.call.premium}</td>
+          <td>${strike.call.oi.toLocaleString()}</td>
+          <td>${strike.call.volume.toLocaleString()}</td>
+          <td class="put-premium">₹${strike.put.premium}</td>
+          <td>${strike.put.oi.toLocaleString()}</td>
+          <td>${strike.put.volume.toLocaleString()}</td>
+        </tr>`;
+      });
+      
+      html += '</table></div>';
+      
+      // Add info section with OI breakdown
+      const totalOIAll = window.totalOI || 0;
+      const totalCallOIAll = window.totalCallOI || 0;
+      const totalPutOIAll = window.totalPutOI || 0;
+      
+      html += `<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 10px;">
+          <p style="color: #666; font-size: 12px; margin: 0;"><strong>Spot Price:</strong> ₹${spotPrice ? Number(spotPrice).toFixed(2) : 'N/A'}</p>
+        </div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 8px;">
+          <p style="color: #666; font-size: 12px; margin: 0;"><strong>All Contracts:</strong></p>
+          <p style="color: #2563eb; font-size: 12px; margin: 0;"><strong>Call OI:</strong> ${totalCallOIAll.toLocaleString()}</p>
+          <p style="color: #dc2626; font-size: 12px; margin: 0;"><strong>Put OI:</strong> ${totalPutOIAll.toLocaleString()}</p>
+          <p style="color: #666; font-size: 12px; margin: 0;"><strong>Total OI:</strong> ${totalOIAll.toLocaleString()}</p>
+        </div>
+        ${window.currentExpiry !== 'all' ? `
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          <p style="color: #666; font-size: 12px; margin: 0;"><strong>Current View (${formatExpiryDate(window.currentExpiry)}):</strong></p>
+          <p style="color: #2563eb; font-size: 12px; margin: 0;"><strong>Call OI:</strong> ${filteredCallOI.toLocaleString()}</p>
+          <p style="color: #dc2626; font-size: 12px; margin: 0;"><strong>Put OI:</strong> ${filteredPutOI.toLocaleString()}</p>
+          <p style="color: #666; font-size: 12px; margin: 0;"><strong>Total OI:</strong> ${filteredTotalOI.toLocaleString()}</p>
+        </div>
+        ` : ''}
+      </div>`;
+      
+      container.innerHTML = html;
+    }
+
+    // Search filter
+    document.getElementById('searchFilter').addEventListener('input', (e) => {
+      const search = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#futuresTable table tr');
+      rows.forEach((row, index) => {
+        if (index === 0) return; // Skip header
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(search) ? '' : 'none';
+      });
+    });
+
+    // Initialize
+    // Auto-refresh timers
+    let futuresTimer = null;
+    let optionsTimer = null;
+
+    function startFuturesAutoRefresh(symbol) {
+      if (futuresTimer) clearInterval(futuresTimer);
+      futuresTimer = setInterval(() => {
+        loadFutures(symbol || document.getElementById('symbolFilter').value || '');
+      }, 15000);
+    }
+
+    function startOptionsAutoRefresh(symbol) {
+      if (optionsTimer) clearInterval(optionsTimer);
+      // Only run if options tab is active and symbol selected
+      if (!document.getElementById('optionsTab').classList.contains('active')) return;
+      if (!symbol) return;
+      optionsTimer = setInterval(() => {
+        const active = document.getElementById('optionsTab').classList.contains('active');
+        const sym = symbol || document.getElementById('symbolFilter').value;
+        if (active && sym) loadOptions(sym);
+      }, 15000);
+    }
+
+    function stopOptionsAutoRefresh() {
+      if (optionsTimer) clearInterval(optionsTimer);
+      optionsTimer = null;
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (futuresTimer) clearInterval(futuresTimer);
+      if (optionsTimer) clearInterval(optionsTimer);
+    });
+
+    loadSymbols();
+  </script>
+</body>
+</html>
+

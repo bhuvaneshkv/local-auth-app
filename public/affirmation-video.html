@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affirmation Video - Trading App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .video-container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .video-title {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .video-player {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      position: relative;
+      aspect-ratio: 16/9;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .video-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 60px; /* Leave space for controls */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .affirmation-display {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .affirmation-number {
+      color: #667eea;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    .affirmation-text {
+      color: white;
+      font-size: 28px;
+      line-height: 1.4;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-info {
+      color: #ccc;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background 0.2s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .control-btn:active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .play-btn {
+      font-size: 24px;
+      width: 50px;
+      height: 50px;
+    }
+
+    .progress-container {
+      flex: 1;
+      margin: 0 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    .time-display {
+      color: white;
+      font-size: 12px;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .speed-control {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .settings-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-title {
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .setting-group {
+      margin-bottom: 15px;
+    }
+
+    .setting-label {
+      display: block;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .setting-select, .setting-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .voice-test-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .status-message {
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .video-content {
+        padding: 20px;
+      }
+
+      .affirmation-text {
+        font-size: 22px;
+      }
+
+      .video-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .control-group {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Affirmation Video</h1>
+    <div class="nav-buttons">
+      <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+      <a href="affirmations.html" class="btn btn-secondary">Affirmations</a>
+      <a href="fno.html" class="btn btn-secondary">Futures & Options</a>
+      <a href="api.html" class="btn btn-secondary">API</a>
+      <button id="logoutBtn" class="btn btn-primary">Logout</button>
+    </div>
+  </div>
+
+  <div class="video-container">
+    <h2 class="video-title">Trading Success Affirmations - Voice Narration</h2>
+
+    <div class="video-player" id="videoPlayer">
+      <div class="video-content">
+        <div class="affirmation-display">
+          <div class="affirmation-number" id="affirmationNumber">Affirmation 1 of 100</div>
+          <div class="affirmation-text" id="affirmationText">Click play to begin your affirmation journey...</div>
+          <div class="progress-info" id="progressInfo">Ready to start</div>
+        </div>
+      </div>
+
+      <div class="video-controls">
+        <div class="control-group">
+          <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
+          <button class="control-btn play-btn" id="playBtn" title="Play">▶</button>
+          <button class="control-btn" id="nextBtn" title="Next">⏭</button>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+          <select class="speed-control" id="speedControl">
+            <option value="0.5">0.5x</option>
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-panel">
+      <h3 class="settings-title">Voice Settings</h3>
+
+      <div class="setting-group">
+        <label class="setting-label" for="voiceSelect">Voice:</label>
+        <select class="setting-select" id="voiceSelect">
+          <option value="">Default Voice</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" for="pitchControl">Pitch:</label>
+        <input type="range" class="setting-input" id="pitchControl" min="0" max="2" step="0.1" value="1">
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" for="rateControl">Rate:</label>
+        <input type="range" class="setting-input" id="rateControl" min="0.1" max="2" step="0.1" value="1">
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label" for="volumeControl">Volume:</label>
+        <input type="range" class="setting-input" id="volumeControl" min="0" max="1" step="0.1" value="1">
+      </div>
+
+      <button class="voice-test-btn" id="testVoiceBtn">Test Voice Settings</button>
+
+      <div class="status-message" id="statusMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    // All 100 affirmations
+    const affirmations = [
+      "I am a disciplined and patient trader who follows my trading plan with unwavering commitment.",
+      "I embrace losses as valuable learning experiences that make me a better trader.",
+      "I trust my analysis and have the courage to enter trades when my setup is perfect.",
+      "I maintain emotional control and never let fear or greed dictate my trading decisions.",
+      "I focus on the process, not the outcome, knowing that consistent execution leads to success.",
+      "I am grateful for every trading opportunity and approach each day with enthusiasm and optimism.",
+      "I respect the markets and understand that they are always right, even when they prove me wrong.",
+      "I continuously educate myself and stay updated with market developments and trading strategies.",
+      "I practice proper risk management and never risk more than I can afford to lose.",
+      "I accept that losses are part of trading and use them to improve my strategy and mindset.",
+      "I remain calm and composed during market volatility, knowing that panic leads to poor decisions.",
+      "I celebrate small wins and learn from small losses, maintaining balance in my trading journey.",
+      "I have unlimited potential as a trader and commit to lifelong learning and growth.",
+      "I trust my instincts while combining them with technical and fundamental analysis.",
+      "I am patient enough to wait for high-probability setups rather than forcing trades.",
+      "I maintain a positive mindset even after consecutive losses, knowing that success is inevitable.",
+      "I follow my trading rules religiously and never deviate from my proven strategy.",
+      "I view drawdowns as temporary setbacks that build my resilience and trading skills.",
+      "I am committed to continuous improvement and regularly review my trades for lessons learned.",
+      "I have the mental strength to cut losses quickly and let profits run when appropriate.",
+      "I approach trading with humility, knowing that the markets can always surprise me.",
+      "I am grateful for the abundance of opportunities that the financial markets provide.",
+      "I maintain discipline in my daily routine, including proper sleep, exercise, and meditation.",
+      "I trust in the power of compounding and understand that wealth is built gradually over time.",
+      "I focus on controlling what I can control: my entries, exits, and position sizing.",
+      "I am becoming a master of my emotions and use them as signals rather than drivers of my decisions.",
+      "I celebrate the journey of becoming a successful trader, not just the destination of profits.",
+      "I have a growth mindset and view challenges as opportunities to become stronger.",
+      "I practice mindfulness and stay present in the moment during market hours.",
+      "I am confident in my ability to adapt to changing market conditions and evolve my strategy.",
+      "I maintain realistic expectations and understand that consistent small gains lead to wealth.",
+      "I am free from the need for validation and trade based on my own analysis and conviction.",
+      "I respect the power of compounding and let my winners compound my account balance.",
+      "I approach each trading day with curiosity and a desire to learn something new.",
+      "I have the discipline to avoid revenge trading after a loss and wait for proper setups.",
+      "I am building a legacy of consistent trading performance that will benefit future generations.",
+      "I practice gratitude for my trading education and the mentors who guide me.",
+      "I maintain healthy boundaries and know when to step away from the markets for mental recharge.",
+      "I am worthy of trading success and deserve the financial freedom it brings.",
+      "I embrace uncertainty as a natural part of trading and remain comfortable with it.",
+      "I have the courage to admit when I'm wrong and exit trades without hesitation.",
+      "I focus on the quality of my trades rather than the quantity of trades executed.",
+      "I am becoming increasingly aware of my trading biases and work to eliminate them.",
+      "I treat trading as a business and approach it with the same professionalism as any enterprise.",
+      "I am grateful for the technology that allows me to participate in global financial markets.",
+      "I maintain objectivity and avoid letting personal opinions influence my trading decisions.",
+      "I have the patience to wait for the perfect storm of conditions before entering a trade.",
+      "I am committed to ethical trading practices and never manipulate markets or spread misinformation.",
+      "I view myself as a student of the markets and approach each day with humility and wonder.",
+      "I have the mental toughness to withstand temporary setbacks and continue moving forward.",
+      "I practice visualization and see myself achieving trading success in vivid detail.",
+      "I am developing the intuition that comes from years of studying market patterns.",
+      "I maintain a trading journal that documents my journey and helps me improve continuously.",
+      "I am building wealth systematically through disciplined and calculated trading decisions.",
+      "I respect the time it takes to become a consistently profitable trader and am patient with myself.",
+      "I avoid comparison with other traders and focus on my own progress and improvement.",
+      "I have the wisdom to know when to hold and when to fold in any trading situation.",
+      "I am creating positive trading habits that will serve me for the rest of my career.",
+      "I approach trading with joy and enthusiasm rather than stress and anxiety.",
+      "I am worthy of the success that comes from hard work, dedication, and continuous learning.",
+      "I maintain a healthy work-life balance that supports my trading performance.",
+      "I trust in the power of compounding and understand that small, consistent gains create wealth.",
+      "I am developing the resilience to bounce back stronger after every setback.",
+      "I practice self-compassion and understand that even successful traders have losing trades.",
+      "I am building a trading system that works for me and my unique personality and strengths.",
+      "I have the courage to trade against the crowd when my analysis shows I'm right.",
+      "I am grateful for the financial education that empowers me to create wealth through trading.",
+      "I maintain a healthy relationship with money and view it as a tool for freedom and opportunity.",
+      "I am committed to mastering one trading strategy before moving on to another.",
+      "I have the mental clarity to recognize when market conditions change and adapt accordingly.",
+      "I practice deep breathing and meditation to maintain calm during volatile market periods.",
+      "I am creating a legacy of financial independence that will benefit my family and community.",
+      "I focus on the present moment and don't worry about past losses or future uncertainties.",
+      "I have the discipline to follow my trading plan even when it's emotionally challenging.",
+      "I am becoming the trader I need to be to achieve my financial goals and dreams.",
+      "I practice gratitude for both winning and losing trades, as they teach me valuable lessons.",
+      "I maintain healthy skepticism and verify all information before making trading decisions.",
+      "I am developing the confidence that comes from thorough preparation and diligent study.",
+      "I treat every trade as an opportunity to practice my skills and improve my performance.",
+      "I have the wisdom to know that timing is everything in trading and patience is my ally.",
+      "I am building emotional intelligence that allows me to trade with clarity and confidence.",
+      "I respect the markets' ability to be unpredictable and remain flexible in my approach.",
+      "I am committed to lifelong learning and view every market experience as a teacher.",
+      "I practice positive self-talk and eliminate negative thoughts that hinder my trading success.",
+      "I have the mental fortitude to withstand periods of drawdown and continue trading effectively.",
+      "I am grateful for the technology and tools that make sophisticated trading accessible to everyone.",
+      "I maintain objectivity by keeping my ego in check and trading based on facts, not feelings.",
+      "I am developing the intuition that guides me toward profitable trading opportunities.",
+      "I practice mindfulness and stay fully present during my trading sessions.",
+      "I have the courage to take calculated risks that align with my risk management plan.",
+      "I am building a trading business that generates passive income and financial freedom.",
+      "I maintain a healthy relationship with uncertainty and view it as an opportunity, not a threat.",
+      "I am worthy of the success that comes from years of dedication to mastering my craft.",
+      "I practice self-reflection daily to identify areas for improvement and celebrate my progress.",
+      "I have the mental strength to overcome any challenge that the markets present to me.",
+      "I am grateful for the community of traders who share knowledge and support each other.",
+      "I approach trading with enthusiasm and view each day as a new opportunity to excel.",
+      "I am becoming the master of my emotions and use them to enhance, not hinder, my trading.",
+      "I trust in my ability to create consistent, long-term success through disciplined trading.",
+      "I am a successful trader who combines skill, discipline, and positive mindset to achieve financial freedom."
+    ];
+
+    // Video player functionality
+    class AffirmationVideoPlayer {
+      constructor() {
+        this.currentIndex = 0;
+        this.isPlaying = false;
+        this.speechSynthesis = window.speechSynthesis;
+        this.currentUtterance = null;
+        this.startTime = 0;
+        this.totalDuration = affirmations.length * 5000; // 5 seconds per affirmation
+
+        this.initializeElements();
+        this.setupEventListeners();
+        this.loadVoices();
+        this.updateDisplay();
+      }
+
+      initializeElements() {
+        this.affirmationNumber = document.getElementById('affirmationNumber');
+        this.affirmationText = document.getElementById('affirmationText');
+        this.progressInfo = document.getElementById('progressInfo');
+        this.playBtn = document.getElementById('playBtn');
+        this.prevBtn = document.getElementById('prevBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.progressBar = document.getElementById('progressBar');
+        this.progressFill = document.getElementById('progressFill');
+        this.timeDisplay = document.getElementById('timeDisplay');
+        this.speedControl = document.getElementById('speedControl');
+        this.voiceSelect = document.getElementById('voiceSelect');
+        this.pitchControl = document.getElementById('pitchControl');
+        this.rateControl = document.getElementById('rateControl');
+        this.volumeControl = document.getElementById('volumeControl');
+        this.testVoiceBtn = document.getElementById('testVoiceBtn');
+        this.statusMessage = document.getElementById('statusMessage');
+      }
+
+      setupEventListeners() {
+        this.playBtn.addEventListener('click', () => this.togglePlay());
+        this.prevBtn.addEventListener('click', () => this.previous());
+        this.nextBtn.addEventListener('click', () => this.next());
+        this.progressBar.addEventListener('click', (e) => this.seek(e));
+        this.speedControl.addEventListener('change', () => this.updateSpeed());
+        this.testVoiceBtn.addEventListener('click', () => this.testVoice());
+
+        // Settings controls
+        this.voiceSelect.addEventListener('change', () => this.updateVoice());
+        this.pitchControl.addEventListener('input', () => this.updateVoiceSettings());
+        this.rateControl.addEventListener('input', () => this.updateVoiceSettings());
+        this.volumeControl.addEventListener('input', () => this.updateVoiceSettings());
+      }
+
+      loadVoices() {
+        const loadVoices = () => {
+          const voices = this.speechSynthesis.getVoices();
+          this.voiceSelect.innerHTML = '<option value="">Default Voice</option>';
+
+          voices.forEach((voice, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            this.voiceSelect.appendChild(option);
+          });
+        };
+
+        loadVoices();
+        if (this.speechSynthesis.onvoiceschanged !== undefined) {
+          this.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }
+
+      updateDisplay() {
+        this.affirmationNumber.textContent = `Affirmation ${this.currentIndex + 1} of ${affirmations.length}`;
+        this.affirmationText.textContent = affirmations[this.currentIndex];
+        this.progressInfo.textContent = this.isPlaying ? 'Speaking...' : 'Paused';
+
+        const progress = ((this.currentIndex + 1) / affirmations.length) * 100;
+        this.progressFill.style.width = `${progress}%`;
+
+        this.updateTimeDisplay();
+      }
+
+      updateTimeDisplay() {
+        const currentTime = Math.floor((this.currentIndex / affirmations.length) * this.totalDuration / 1000);
+        const totalTime = Math.floor(this.totalDuration / 1000);
+        this.timeDisplay.textContent = `${this.formatTime(currentTime)} / ${this.formatTime(totalTime)}`;
+      }
+
+      formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      togglePlay() {
+        if (this.isPlaying) {
+          this.pause();
+        } else {
+          this.play();
+        }
+      }
+
+      play() {
+        if (!this.speechSynthesis) {
+          this.showStatus('Speech synthesis not supported in this browser', 'error');
+          return;
+        }
+
+        this.isPlaying = true;
+        this.playBtn.innerHTML = '⏸';
+        this.speakCurrentAffirmation();
+        this.showStatus('Playing affirmations...', 'success');
+      }
+
+      pause() {
+        this.isPlaying = false;
+        this.playBtn.innerHTML = '▶';
+        if (this.speechSynthesis.speaking) {
+          this.speechSynthesis.cancel();
+        }
+        this.progressInfo.textContent = 'Paused';
+        this.showStatus('Paused', 'success');
+      }
+
+      speakCurrentAffirmation() {
+        if (this.currentUtterance) {
+          this.speechSynthesis.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(affirmations[this.currentIndex]);
+
+        // Apply voice settings
+        const voices = this.speechSynthesis.getVoices();
+        const selectedVoiceIndex = this.voiceSelect.value;
+        if (selectedVoiceIndex && voices[selectedVoiceIndex]) {
+          utterance.voice = voices[selectedVoiceIndex];
+        }
+
+        utterance.pitch = parseFloat(this.pitchControl.value);
+        utterance.rate = parseFloat(this.rateControl.value) * parseFloat(this.speedControl.value);
+        utterance.volume = parseFloat(this.volumeControl.value);
+
+        utterance.onstart = () => {
+          this.progressInfo.textContent = 'Speaking...';
+        };
+
+        utterance.onend = () => {
+          if (this.isPlaying && this.currentIndex < affirmations.length - 1) {
+            setTimeout(() => {
+              this.next();
+            }, 1000); // 1 second pause between affirmations
+          } else {
+            this.pause();
+            if (this.currentIndex >= affirmations.length - 1) {
+              this.showStatus('Completed all affirmations!', 'success');
+            }
+          }
+        };
+
+        utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event);
+          this.showStatus('Speech synthesis error occurred', 'error');
+          this.pause();
+        };
+
+        this.currentUtterance = utterance;
+        this.speechSynthesis.speak(utterance);
+      }
+
+      previous() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.updateDisplay();
+          if (this.isPlaying) {
+            this.speakCurrentAffirmation();
+          }
+        }
+      }
+
+      next() {
+        if (this.currentIndex < affirmations.length - 1) {
+          this.currentIndex++;
+          this.updateDisplay();
+          if (this.isPlaying) {
+            this.speakCurrentAffirmation();
+          }
+        } else {
+          this.pause();
+          this.showStatus('Reached the end of affirmations', 'success');
+        }
+      }
+
+      seek(event) {
+        const rect = this.progressBar.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const percentage = clickX / rect.width;
+        const newIndex = Math.floor(percentage * affirmations.length);
+
+        this.currentIndex = Math.max(0, Math.min(newIndex, affirmations.length - 1));
+        this.updateDisplay();
+
+        if (this.isPlaying) {
+          this.speakCurrentAffirmation();
+        }
+      }
+
+      updateSpeed() {
+        if (this.isPlaying && this.currentUtterance) {
+          this.speakCurrentAffirmation(); // Restart with new speed
+        }
+      }
+
+      updateVoice() {
+        // Voice will be applied on next speech
+      }
+
+      updateVoiceSettings() {
+        // Settings will be applied on next speech
+      }
+
+      testVoice() {
+        const testText = "This is a test of your voice settings. Hello, trader!";
+        const utterance = new SpeechSynthesisUtterance(testText);
+
+        const voices = this.speechSynthesis.getVoices();
+        const selectedVoiceIndex = this.voiceSelect.value;
+        if (selectedVoiceIndex && voices[selectedVoiceIndex]) {
+          utterance.voice = voices[selectedVoiceIndex];
+        }
+
+        utterance.pitch = parseFloat(this.pitchControl.value);
+        utterance.rate = parseFloat(this.rateControl.value);
+        utterance.volume = parseFloat(this.volumeControl.value);
+
+        this.speechSynthesis.speak(utterance);
+        this.showStatus('Testing voice...', 'success');
+      }
+
+      showStatus(message, type) {
+        this.statusMessage.textContent = message;
+        this.statusMessage.className = `status-message status-${type}`;
+        this.statusMessage.style.display = 'block';
+
+        setTimeout(() => {
+          this.statusMessage.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Initialize the video player when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new AffirmationVideoPlayer();
+    });
+
+    // Logout functionality
+    document.getElementById('logoutBtn').onclick = async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>
