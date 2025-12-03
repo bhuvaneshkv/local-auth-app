@@ -76,7 +76,7 @@ db.serialize(() => {
 });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
 
 // Middleware
 app.use(bodyParser.json());
@@ -799,7 +799,10 @@ app.get('/api/users/sync-habits', requireAdmin, (req, res) => {
 });
 // ---------------- end Sync block ----------------
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+const PORT = process.env.PORT || 8080;
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running at http://${HOST}:${PORT}`);
   console.log(`SQLite DB stored at: ${DB_PATH}`);
 });
