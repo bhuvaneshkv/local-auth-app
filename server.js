@@ -163,8 +163,7 @@ function buildHabitsIdempotencyKey(localId, email) {
 // ---------- end Habits integration ----------
 
 // ---------- NIFTY50 price endpoint (drop-in replacement) ----------
-const YahooFinance = require('yahoo-finance2').default;
-const yf = new YahooFinance();
+const yf = require('yahoo-finance2').default;
 // robust lru-cache import that works across versions
 const _LRU = require('lru-cache');
 const LRUClass = (_LRU && (_LRU.default || _LRU.LRUCache)) ? (_LRU.default || _LRU.LRUCache) : _LRU;
